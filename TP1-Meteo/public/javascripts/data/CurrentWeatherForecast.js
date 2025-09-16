@@ -2,6 +2,22 @@
 // since the ForecastDays API provide the current day + the 7 next days as arrays.
 const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=46.04178&longitude=-73.11358&current_weather=true";
 
+
+export function getCurrentWeatherForecast(latitude, longitude){
+	return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`)
+	.then(res => res.json())
+	.then(data => {
+		return {
+			temperature: data.current_weather.temperature,
+			windspeed: data.current_weather.windspeed,
+			winddirection: data.current_weather.winddirection,
+			weathercode: data.current_weather.weathercode,
+			is_day: data.current_weather.is_day,
+			time: data.current_weather.time
+		};
+	});
+}
+
 const sampleData = {
 	"latitude": 46.04474,
 	"longitude": -73.10983,
