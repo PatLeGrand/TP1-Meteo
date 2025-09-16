@@ -3,22 +3,24 @@ const apiUrl = "https://geocoding-api.open-meteo.com/v1/search?name=Sorel&count=
 const endpointDocumentation = "https://open-meteo.com/en/docs/geocoding-api#name=Sorel&language=fr";
 
 
-export function searchCities(query) {
-	return fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=10&language=fr&format=json`)
-	.then(res => res.json())
-	.then(data => {
-		if (!data.results){
-			return [];
-		}
-		return data.results.map(city => ({
-			id: city.id,
-			name: city.name,
-			country: city.country,
-			latitude: city.latitude,
-			longitude: city.longitude
-		}));
-	});
+export async function searchCities(query) {
+	const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=10&language=fr&format=json`);
+	const data = await res.json();
+
+	if (!data || data.results == []) {
+		console.log("HERE")
+		return []
+	}
+
+	return data.results.map(city => ({
+		id: city.id,
+		name: city.name,
+		country: city.country,
+		latitude: city.latitude,
+		longitude: city.longitude
+	}));
 }
+
 const sampleResponse = {
 	"results": [{
 		"id": 2974198,

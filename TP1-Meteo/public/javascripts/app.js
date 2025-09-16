@@ -7,7 +7,7 @@ import { getSearchCityTemplate, getCurrentWeatherTemplate } from './templates/te
 const userSearch = document.querySelector("#search-bar-input");
 const accordion = document.querySelector("[data-accordion]");
 
-userSearch.addEventListener("input", (event) => {
+userSearch.addEventListener("input", async (event) => {
   const query = event.target.value;
 
   if (!query) {
@@ -15,27 +15,28 @@ userSearch.addEventListener("input", (event) => {
     return;
   }
 
-  searchCities(query).then(cities => {
+  const cities = await searchCities(query)
+
     accordion.innerHTML = "";
     for (const city of cities) {
-      const item = document.createElement("div");
-      item.classList.add("accordion-item");
-      item.innerHTML = getSearchCityTemplate(city);
-      accordion.append(item);
-     
-      const button = item.querySelector("button");
-      button.addEventListener("click", () => {
+        const item = document.createElement("div");
+        item.classList.add("accordion-item");
+        item.innerHTML = getSearchCityTemplate(city);
+        accordion.append(item);
+        
+        const button = item.querySelector("button");
+        button.addEventListener("click", () => {
         const collapse = item.querySelector(".accordion-body");
         collapse.innerHTML = "<div class='text-muted'>Loading...</div>";
 
         getCurrentWeatherForecast(city.latitude, city.longitude)
-          .then(currentWeather => {
+            .then(currentWeather => {
             collapse.innerHTML = getCurrentWeatherTemplate(currentWeather);
-          })
-          .catch(() => {
+            })
+            .catch(() => {
             collapse.innerHTML = "<div class='text-danger'>Unable to fetch weather data.</div>";
-          });
-      });
+            });
+        });
     }
-  });
+
 });
