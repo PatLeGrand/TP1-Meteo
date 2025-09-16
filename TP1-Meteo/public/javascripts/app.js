@@ -1,5 +1,6 @@
 import { searchCities } from './data/Geocoding.js'
 import { getForecast } from './data/ForecastDaysWeatherForecast.js'
+import { getSearchCityTemplate } from './templates/templates.js';
 
 const userSearch = document.querySelector("#search-bar-input");
 const accordion = document.querySelector("[data-accordion]")
@@ -18,19 +19,17 @@ userSearch.addEventListener("input", (event) => {
             const item = document.createElement("div");
             item.classList.add("accordion-item");
                 
-            item.innerHTML = `
-                <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button">
-                    <i class="fa-solid fa-location-dot me-2 text-primary"></i>
-                    ${city.name}, ${city.country}
-                </button>
-                </h2>
-                <div class="accordion-collapse collapse">
-                <div class="accordion-body">Cliquez pour voir la météo...</div>
-                </div>
-            `;
+            item.innerHTML = getSearchCityTemplate(city);
 
-            accordion.append(item);            
+            accordion.append(item);
+            
+            const button = item.querySelector("button");
+            button.addEventListener("click", () =>{
+                getForecast(city.latitude, city.longitude, 8).then(() => {
+                    const collapse = item.querySelector(".accordion-body")
+                    collapse.innerHTML="Merci"
+                })
+            })
         }
 
     }
