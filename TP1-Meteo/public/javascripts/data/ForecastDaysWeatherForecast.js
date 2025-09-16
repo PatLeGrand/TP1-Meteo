@@ -1,6 +1,33 @@
 // This API will provide the next 8 days information (temperature, weather code, windspeed, etc.).
 const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=46.04178&longitude=-73.11358&forecast_days=8&timezone=auto&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,weathercode,sunrise,sunset,windspeed_10m_max,winddirection_10m_dominant";
 
+
+export function getForecast(latitude, longitude, forecast_days){
+	return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&forecast_days=${forecast_days}&timezone=auto&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,weathercode,sunrise,sunset,windspeed_10m_max,winddirection_10m_dominant`)
+	.then(res => res.json())
+	.then(data => {
+		if(!data.daily){
+			return [];
+		}
+		const day = data.daily.time.length;
+		return data.daily.time.map((date, i) => {
+			return {
+				date: date,
+				temperature_2m_max: data.daily.temperature_2m_max[i],
+				temperature_2m_min: data.daily.temperature_2m_min[i],
+				apparent_temperature_max: data.daily.apparent_temperature_max[i],
+				apparent_temperature_min: data.daily.apparent_temperature_min[i],
+				code: data.daily.weathercode[i],
+				sunrise: data.daily.sunrise[i],
+				sunset: data.daily.sunset[i],
+				windspeed_10m_max: data.daily.windspeed_10m_max[i],
+				winddirection_10m_dominant: data.daily.winddirection_10m_dominant[i]
+			};
+		});
+	});
+}
+
+
 const sampleData = {
 	"latitude": 46.04474,
 	"longitude": -73.10983,
