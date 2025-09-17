@@ -1,4 +1,5 @@
 import { getWeatherDescription } from "../data/ForecastDaysWeatherForecast.js";
+import { getWeatherIcon } from "../services/weatherImagesConverter.js";
 
 export function getSearchCityTemplate(city) {
   return `
@@ -107,7 +108,7 @@ export function getForecastTemplate(forecasts) {
           <div class="col mt-2">
             <h5 class="fs-6 fw-bold mb-0">${title}</h5>
             <div class="mb-3"><small>${smallDate}</small></div>
-            <img class="weather-detail-icon" src="../public/images/rainy.svg" alt="Forecast">
+            <img class="weather-detail-icon" src="${getWeatherIcon(day.weathercode)}" alt="${getWeatherDescription(day.weathercode)}">
             <div class="fw-bold mb-2">${getWeatherDescription(day.weathercode)}</div>
           </div>
           <div class="col mt-2">
