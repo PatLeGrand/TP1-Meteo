@@ -3,7 +3,7 @@ const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=46.04178&longitu
 
 
 export function getForecast(latitude, longitude, days = 8) {
-  return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,sunrise,sunset&timezone=auto`)
+  return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,sunrise,sunset,weathercode&timezone=auto`)
     .then(res => res.json())
     .then(data => {
       const daily = data.daily;
@@ -13,10 +13,35 @@ export function getForecast(latitude, longitude, days = 8) {
         temperature_2m_min: daily.temperature_2m_min[i],
         windspeed_10m_max: daily.windspeed_10m_max[i],
         sunrise: daily.sunrise[i],
-        sunset: daily.sunset[i]
+		weathercode: daily.weathercode[i],
+        sunset: daily.sunset[i],
       }));
       return forecasts;
     });
+}
+
+export function getWeatherDescription(code) {
+  const codes = {
+    0: "Clear sky",
+    1: "Mainly clear",
+    2: "Partly cloudy",
+    3: "Overcast",
+    45: "Fog",
+    48: "Depositing rime fog",
+    51: "Drizzle: Light intensity",
+    53: "Drizzle: Moderate intensity",
+    55: "Drizzle: Dense intensity",
+    61: "Rain: Slight intensity",
+    63: "Rain: Moderate intensity",
+    65: "Rain: Heavy intensity",
+    80: "Rain showers: Slight intensity",
+    81: "Rain showers: Moderate intensity",
+    82: "Rain showers: Violent intensity",
+    95: "Thunderstorm: Slight or moderate",
+    96: "Thunderstorm with slight hail",
+    99: "Thunderstorm with heavy hail"
+  };
+  return codes[code] ?? "Unknown";
 }
 
 

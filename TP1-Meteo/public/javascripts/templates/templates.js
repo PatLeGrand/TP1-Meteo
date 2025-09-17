@@ -1,3 +1,5 @@
+import { getWeatherDescription } from "../data/ForecastDaysWeatherForecast.js";
+
 export function getSearchCityTemplate(city) {
   return `
     <header class="accordion-header wrap-words">
@@ -70,5 +72,64 @@ export function getCurrentWeatherTemplate(currentWeather) {
       </div>
     </div>
   `;
+}
+
+
+export function getForecastTemplate(forecasts) {
+  let html = `
+    <hr class="border-white">
+    <div>
+      <h4 class="text-white fs-6 fw-bold mb-3">Daily Forecast</h4>
+      <div class="weather-details-grid mb-2">
+  `;
+
+  forecasts.forEach((day, index) => {
+    const dateObj = new Date(day.date);
+
+
+    let title;
+    if (index === 0) {
+      title = "Today";
+    } else if (index === 1) {
+      title = "Tomorrow";
+    } else {
+      title = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+    }
+
+    const smallDate = dateObj.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+    });
+
+    html += `
+      <div class="rounded-2 p-3 shadow border border-1 border-dark">
+        <div class="row flex-wrap">
+          <div class="col mt-2">
+            <h5 class="fs-6 fw-bold mb-0">${title}</h5>
+            <div class="mb-3"><small>${smallDate}</small></div>
+            <img class="weather-detail-icon" src="../public/images/rainy.svg" alt="Forecast">
+            <div class="fw-bold mb-2">${getWeatherDescription(day.weathercode)}</div>
+          </div>
+          <div class="col mt-2">
+            <div class="mb-3">
+              <i class="fa-solid fa-temperature-three-quarters"></i>
+              <span>Min: ${(day.temperature_2m_max+day.temperature_2m_min)/2}°</span>
+            </div>
+            <div class="mb-3">
+              <i class="fa-solid fa-wind"></i>
+              <span>${day.windspeed_10m_max} km/h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  return html;
 }
 

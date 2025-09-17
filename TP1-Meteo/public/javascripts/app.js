@@ -1,21 +1,21 @@
 
 import { searchCities } from './data/Geocoding.js';
-// import { getForecast } from './data/ForecastDaysWeatherForecast.js';
+import { getForecast } from './data/ForecastDaysWeatherForecast.js';
 import { getCurrentWeatherForecast } from './data/CurrentWeatherForecast.js';
-import { getSearchCityTemplate, getCurrentWeatherTemplate } from './templates/templates.js';
+import { getSearchCityTemplate, getCurrentWeatherTemplate, getForecastTemplate } from './templates/templates.js';
 
 const userSearch = document.querySelector("#search-bar-input");
 const accordion = document.querySelector("[data-accordion]");
 
 userSearch.addEventListener("input", async (event) => {
-  const query = event.target.value;
+    const query = event.target.value;
 
-  if (!query) {
-    accordion.innerHTML = "";
-    return;
-  }
+    if (!query) {
+        accordion.innerHTML = "";
+        return;
+    }
 
-  const cities = await searchCities(query)
+    const cities = await searchCities(query);
 
     accordion.innerHTML = "";
     for (const city of cities) {
@@ -25,17 +25,15 @@ userSearch.addEventListener("input", async (event) => {
         accordion.append(item);
         
         const button = item.querySelector("button");
-        button.addEventListener("click", () => {
-        const collapse = item.querySelector(".accordion-body");
-        collapse.innerHTML = "<div class='text-muted'>Loading...</div>";
+        button.addEventListener("click", async () => {
+            const collapse = item.querySelector(".accordion-body");
+            collapse.innerHTML = "<div class='text-muted'>Loading...</div>"; 
 
-        getCurrentWeatherForecast(city.latitude, city.longitude)
-            .then(currentWeather => {
+            const currentWeather = await getCurrentWeatherForecast(city.latitude, city.longitude);
             collapse.innerHTML = getCurrentWeatherTemplate(currentWeather);
-            })
-            .catch(() => {
-            collapse.innerHTML = "<div class='text-danger'>Unable to fetch weather data.</div>";
-            });
+
+            const forecasts = await getForecast(city.latitude, city.longitude, 8);
+            collapse.innerHTML += getForecastTemplate(forecasts);
         });
     }
 
