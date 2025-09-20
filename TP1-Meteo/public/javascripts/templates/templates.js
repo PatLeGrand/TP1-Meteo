@@ -46,10 +46,10 @@ export function getCurrentWeatherTemplate(currentWeather) {
           <!-- Weather icon and temperature -->
           <div class="row flex-wrap">
             <div class="col">
-              <img class="weather-icon" src="../public/images/cloudy.svg" alt="Weather">
+              <img class="weather-icon" src="${getWeatherIcon(currentWeather.weathercode)}" alt="${getWeatherDescription(currentWeather.weathercode)}">
             </div>
             <div class="col">
-              <div>Condition</div>
+              <div>${getWeatherDescription(currentWeather.weathercode)}</div>
               <div class="fs-1 fw-bold">${currentWeather.temperature}°</div>
             </div>
           </div>
