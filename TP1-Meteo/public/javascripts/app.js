@@ -15,26 +15,38 @@ async function makeSearch(event) {
     return;
   }
 
-  const cities = await searchCities(query);
+  try {
+    const cities = await searchCities(query);
 
-  accordion.innerHTML = "";
-  for (const city of cities) {
-    const item = document.createElement("div");
-    item.classList.add("accordion-item");
-    item.innerHTML = getSearchCityTemplate(city);
-    accordion.append(item);
+    accordion.innerHTML = "";
+    for (const city of cities) {
+      const item = document.createElement("div");
+      item.classList.add("accordion-item");
+      item.innerHTML = getSearchCityTemplate(city);
+      accordion.append(item);
 
-    const button = item.querySelector("button");
-    button.addEventListener("click", async () => {
-      const collapse = item.querySelector(".accordion-body");
-      collapse.innerHTML = "<div class='text-muted'>Loading...</div>";
+      const button = item.querySelector("button");
+      button.addEventListener("click", async () => {
+        const collapse = item.querySelector(".accordion-body");
+        collapse.innerHTML = "<div class='text-muted'>Loading...</div>";
 
-      const currentWeather = await getCurrentWeatherForecast(city.latitude, city.longitude);
-      collapse.innerHTML = getCurrentWeatherTemplate(currentWeather);
-      
-      const forecasts = await getForecast(city.latitude, city.longitude, 8);
-            collapse.innerHTML += getForecastTemplate(forecasts);
-    });
+        try {
+          const currentWeather = await getCurrentWeatherForecast(city.latitude, city.longitude);
+          const forecasts = await getForecast(city.latitude, city.longitude, 8);
+
+          collapse.innerHTML = `
+            ${getCurrentWeatherTemplate(currentWeather)}
+            ${getForecastTemplate(forecasts)}
+          `;
+        } catch (error) {
+          console.error(error);
+          collapse.innerHTML = `<div class="text-danger">⚠️ Unable to load weather data (offline or API issue).</div>`;
+        }
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    accordion.innerHTML = `<div class="alert alert-warning">⚠️ No connection. Please check your Internet and try again.</div>`;
   }
 }
 
