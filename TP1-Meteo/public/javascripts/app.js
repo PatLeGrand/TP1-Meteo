@@ -3,6 +3,7 @@ import { getCurrentWeatherForecast } from './data/CurrentWeatherForecast.js';
 import { getForecast } from './data/ForecastDaysWeatherForecast.js';
 import { getSearchCityTemplate, getCurrentWeatherTemplate, getForecastTemplate } from './templates/templates.js';
 import { debounce } from './services/debounce.js';
+import { getLoader, textDanger } from './services/intercationMessage.js';
 
 const userSearch = document.querySelector("#search-bar-input");
 const accordion = document.querySelector("[data-accordion]");
@@ -28,7 +29,8 @@ async function makeSearch(event) {
       const button = item.querySelector("button");
       button.addEventListener("click", async () => {
         const collapse = item.querySelector(".accordion-body");
-        collapse.innerHTML = "<div class='text-muted'>Loading...</div>";
+        collapse.innerHTML = getLoader("Loading...");
+
 
         try {
           const currentWeather = await getCurrentWeatherForecast(city.latitude, city.longitude);
@@ -40,13 +42,13 @@ async function makeSearch(event) {
           `;
         } catch (error) {
           console.error(error);
-          collapse.innerHTML = `<div class="text-danger">⚠️ Unable to load weather data (offline or API issue).</div>`;
+          collapse.innerHTML = textDanger("⚠️ Unable to load weather data (offline or API issue)");
         }
       });
     }
   } catch (error) {
     console.error(error);
-    accordion.innerHTML = `<div class="alert alert-warning">⚠️ No connection. Please check your Internet and try again.</div>`;
+    accordion.innerHTML = textDanger("⚠️ No connection. Please check your Internet and try again.");
   }
 }
 
