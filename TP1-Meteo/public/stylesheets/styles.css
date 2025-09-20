@@ -108,3 +108,7 @@ button {
         transform: translateY(0);
     }
 }
+
+.accordion-item {
+    border: none;
+}
