@@ -7,6 +7,14 @@ import { getLoader, textDanger } from './services/intercationMessage.js';
 
 const userSearch = document.querySelector("#search-bar-input");
 const accordion = document.querySelector("[data-accordion]");
+const clearButton = document.querySelector(".x");
+
+
+clearButton.addEventListener("click", () => {
+  userSearch.value = ""; 
+  accordion.innerHTML = "";
+  userSearch.focus();    
+});
 
 async function makeSearch(event) {
   const query = event.target.value;
