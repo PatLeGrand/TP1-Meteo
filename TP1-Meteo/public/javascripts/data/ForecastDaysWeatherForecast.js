@@ -1,23 +1,27 @@
 // This API will provide the next 8 days information (temperature, weather code, windspeed, etc.).
+import { getCache, setCache } from "../services/cache.js";
+
 const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=46.04178&longitude=-73.11358&forecast_days=8&timezone=auto&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,weathercode,sunrise,sunset,windspeed_10m_max,winddirection_10m_dominant";
 
+export async function getForecast(latitude, longitude, days = 8) {
+  const key = `forecast-${latitude}-${longitude}-${days}`;
+  const cached = getCache(key);
+  if (cached) return cached;
 
-export function getForecast(latitude, longitude, days = 8) {
-  return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,sunrise,sunset,weathercode&timezone=auto`)
-    .then(res => res.json())
-    .then(data => {
-      const daily = data.daily;
-      const forecasts = daily.time.map((date, i) => ({
-        date: date,
-        temperature_2m_max: daily.temperature_2m_max[i],
-        temperature_2m_min: daily.temperature_2m_min[i],
-        windspeed_10m_max: daily.windspeed_10m_max[i],
-        sunrise: daily.sunrise[i],
-		weathercode: daily.weathercode[i],
-        sunset: daily.sunset[i],
-      }));
-      return forecasts;
-    });
+  const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode&timezone=auto`);
+  const data = await res.json();
+
+  const daily = data.daily;
+  const forecasts = daily.time.map((date, i) => ({
+    date,
+    temperature_2m_max: daily.temperature_2m_max[i],
+    temperature_2m_min: daily.temperature_2m_min[i],
+    windspeed_10m_max: daily.windspeed_10m_max[i],
+    weathercode: daily.weathercode[i]
+  }));
+
+  setCache(key, forecasts, 10 * 60 * 1000);
+  return forecasts;
 }
 
 export function getWeatherDescription(code) {
