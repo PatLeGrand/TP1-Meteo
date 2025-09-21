@@ -9,23 +9,29 @@ const userSearch = document.querySelector("#search-bar-input");
 const accordion = document.querySelector("[data-accordion]");
 const clearButton = document.querySelector(".x");
 
-
 clearButton.addEventListener("click", () => {
-  userSearch.value = ""; 
+  userSearch.value = "";
   accordion.innerHTML = "";
-  userSearch.focus();    
+  userSearch.focus();
 });
 
 async function makeSearch(event) {
-  const query = event.target.value;
+  const query = event.target.value.trim();
 
   if (!query) {
     accordion.innerHTML = "";
     return;
   }
 
+  accordion.innerHTML = getLoader("Searching cities...");
+
   try {
     const cities = await searchCities(query);
+
+    if (!cities || cities.length === 0) {
+      accordion.innerHTML = textDanger(`⚠️ No city found for "${query}"`);
+      return;
+    }
 
     accordion.innerHTML = "";
     for (const city of cities) {
@@ -37,8 +43,7 @@ async function makeSearch(event) {
       const button = item.querySelector("button");
       button.addEventListener("click", async () => {
         const collapse = item.querySelector(".accordion-body");
-        collapse.innerHTML = getLoader("Loading...");
-
+        collapse.innerHTML = getLoader("Loading weather...");
 
         try {
           const currentWeather = await getCurrentWeatherForecast(city.latitude, city.longitude);
@@ -50,7 +55,7 @@ async function makeSearch(event) {
           `;
         } catch (error) {
           console.error(error);
-          collapse.innerHTML = textDanger("⚠️ Unable to load weather data (offline or API issue)");
+          collapse.innerHTML = textDanger("⚠️ Unable to load weather data ");
         }
       });
     }
