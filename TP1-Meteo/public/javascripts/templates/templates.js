@@ -28,12 +28,23 @@ export function getSearchCityTemplate(city) {
 }
 
 export function getCurrentWeatherTemplate(currentWeather) {
+  const date = new Date(currentWeather.time);
+    
+  const formattedDate = date.toLocaleString("en-US", {
+    weekday: "long",  
+    day: "numeric",    
+    month: "long",    
+    year: "numeric", 
+    hour: "2-digit",   
+    minute: "2-digit", 
+    hour12: true      
+  });
   return `
     <div>
       <!-- Local date and time -->
       <div>
         <h4 class="text-white fs-6 fw-bold">Current local date and time</h4>
-        <div>${currentWeather.time}</div>
+        <div>${formattedDate}</div>
       </div>
 
       <hr class="border-white">
