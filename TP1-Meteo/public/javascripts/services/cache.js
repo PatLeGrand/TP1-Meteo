@@ -1,7 +1,7 @@
 const cache = new Map();
 
-export function setCache(key, data, ttlMs) {
-  const expires = Date.now() + ttlMs;
+export function setCache(key, data, timeToLeave) {
+  const expires = Date.now() + timeToLeave;
   cache.set(key, { data, expires });
 }
 

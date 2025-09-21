@@ -1,19 +1,25 @@
-// This API will provide current weather only. Although, this is mostly for reference and I don`t think this is required 
-// since the ForecastDays API provide the current day + the 7 next days as arrays.
+import { getCache, setCache } from "../services/cache.js";
 const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=46.04178&longitude=-73.11358&current_weather=true";
 
+export async function getCurrentWeatherForecast(latitude, longitude) {
+  const key = `current-${latitude}-${longitude}`;
+  const cached = getCache(key);
+  if (cached) return cached;
 
-export async function getCurrentWeatherForecast(latitude, longitude){
-	const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
-	const data = await res.json();
-	return {
-			temperature: data.current_weather.temperature,
-			windspeed: data.current_weather.windspeed,
-			winddirection: data.current_weather.winddirection,
-			weathercode: data.current_weather.weathercode,
-			is_day: data.current_weather.is_day,
-			time: data.current_weather.time
-		};
+  const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
+  const data = await res.json();
+
+  const current = {
+    temperature: data.current_weather.temperature,
+    windspeed: data.current_weather.windspeed,
+    winddirection: data.current_weather.winddirection,
+    weathercode: data.current_weather.weathercode,
+    is_day: data.current_weather.is_day,
+    time: data.current_weather.time
+  };
+
+  setCache(key, current, 5 * 60 * 1000);
+  return current;
 }
 
 const sampleData = {
