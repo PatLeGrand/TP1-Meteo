@@ -29,7 +29,7 @@ export function getSearchCityTemplate(city) {
 
 export function getCurrentWeatherTemplate(currentWeather) {
   const date = new Date(currentWeather.time);
-    
+
   const formattedDate = date.toLocaleString("en-US", {
     weekday: "long",  
     day: "numeric",    
@@ -39,6 +39,7 @@ export function getCurrentWeatherTemplate(currentWeather) {
     minute: "2-digit", 
     hour12: true      
   });
+
   return `
     <div>
       <!-- Local date and time -->
@@ -85,7 +86,6 @@ export function getCurrentWeatherTemplate(currentWeather) {
     </div>
   `;
 }
-
 
 export function getForecastTemplate(forecasts) {
   let html = `

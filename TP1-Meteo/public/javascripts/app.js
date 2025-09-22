@@ -65,4 +65,4 @@ async function makeSearch(event) {
   }
 }
 
-userSearch.addEventListener("input", debounce(makeSearch, 300));
+userSearch.addEventListener("input", debounce(makeSearch, 500));
